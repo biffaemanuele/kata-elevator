@@ -4,10 +4,12 @@ import java.util.concurrent.ConcurrentSkipListSet;
 
 public class Elevator implements Runnable {
 	private final int id;
-	private int currentFloor = 0;
+	
+	private volatile int currentFloor = 0;
+	private volatile boolean running = true;
 
+	
 	private final ConcurrentSkipListSet<Integer> stops = new ConcurrentSkipListSet<>();
-	private boolean running = true;
 
 	public Elevator(int id) {
 		this.id = id;
@@ -17,10 +19,9 @@ public class Elevator implements Runnable {
 		if (floor >= 0 && floor <= 10) {
 			stops.add(floor);
 			return true;
-		} else {
-			System.err.println("[Elevator " + id + "] Floor : " + floor + " not avaiable, try again");
-			return false;
 		}
+		System.err.println("[Elevator " + id + "] Floor " + floor + " not available!");
+		return false;
 	}
 
 	@Override
@@ -40,6 +41,7 @@ public class Elevator implements Runnable {
 		if (stops.isEmpty())
 			return;
 
+	
 		int target = stops.first();
 
 		if (currentFloor < target)
@@ -51,11 +53,10 @@ public class Elevator implements Runnable {
 
 		if (currentFloor == target) {
 			stops.remove(currentFloor);
-			System.out.printf("[Elevator %d] DING! Floor %d reached 🔔%n", id, currentFloor);
+			System.out.printf("[Elevator %d] DING! Floor %d reached %n", id, currentFloor);
 		}
 	}
 
-	//monitoring
 	public int getId() {
 		return id;
 	}

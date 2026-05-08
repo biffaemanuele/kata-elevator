@@ -5,44 +5,52 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Main {
-	public static void main(String[] args) {
-		//Uso executorservice per i virtual thread
-		try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
+    public static void main(String[] args) {
+        
+        try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
+            
+            ElevatorManager manager = new ElevatorManager();
+            
+            // Creazione e avvio ascensori
+            Elevator lift1 = new Elevator(1);
+            Elevator lift2 = new Elevator(2);
+            
+            manager.addElevator(lift1);
+            manager.addElevator(lift2);
+            
+            executor.submit(lift1);
+            executor.submit(lift2);
 
-			Elevator lift1 = new Elevator(1);
-			Elevator lift2 = new Elevator(2);
+            System.out.println("--- Elevator System Ready ---");
+            System.out.println("Enter a floor (0-10) or 'exit' to quit:");
 
-			// Avvio ogni ascensore sul virtual thread
-			executor.submit(lift1);
-			executor.submit(lift2);
+            try (Scanner scanner = new Scanner(System.in)) {
+                while (true) {
+                    String input = scanner.nextLine();
 
-			Scanner scanner = new Scanner(System.in);
-			System.out.println("Elevator enabled. Choose a floor: ");
+                    if (input.equalsIgnoreCase("exit")) {
+                        manager.stopAll();
+                        System.out.println("Shutting down...");
+                        break;
+                    }
 
-			while (true) {
-				String input = scanner.nextLine();
-				if (input.equalsIgnoreCase("exit")) {
-					lift1.stop();
-				    lift2.stop();
-					scanner.close();
-					break;
-				}
-
-				try {
-					int targetFloor = Integer.parseInt(input);
-
-					//Logica per scegliere quali dei due ascensori è più vicino al piano
-					Elevator bestLift = (Math.abs(lift1.getCurrentFloor() - targetFloor) <= Math
-							.abs(lift2.getCurrentFloor() - targetFloor)) ? lift1 : lift2;
-
-					System.out.printf("Request for floor %d assigned to elevator %d%n", targetFloor, bestLift.getId());
-					bestLift.addStop(targetFloor);
-					// ------------------------------
-
-				} catch (NumberFormatException e) {
-					System.out.println("Insert a valid floor number!");
-				}
-			}
-		}
-	}
+                    try {
+                        int targetFloor = Integer.parseInt(input);
+                        
+                        Elevator best = manager.findBestElevator(targetFloor);
+                        
+                        if (best != null) {
+                            if (best.addStop(targetFloor)) {
+                                System.out.printf("Request for floor %d assigned to Elevator %d%n", 
+                                                  targetFloor, best.getId());
+                            }
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid input! Please enter a number between 0 and 10.");
+                    }
+                }
+            }
+        } 
+        System.out.println("System offline.");
+    }
 }

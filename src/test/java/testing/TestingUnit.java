@@ -15,14 +15,23 @@ import it.kataelevator.service.ElevatorService;
 class TestingUnit {
 	
     private ElevatorService service;
-    private Elevator elevator;
+    private Elevator elevator1;
+    private Elevator elevator2;
+
 	
+    //setup prima di ogni test
 	@BeforeEach
     void setup() {
-		//setup prima di ogni test
+		
         service = new ElevatorService();
-        elevator = new Elevator(1);
-        service.registerElevator(elevator);
+        
+        //elevator1
+        elevator1 = new Elevator(1, 0);
+        service.registerElevator(elevator1);
+        
+        //elevator2
+        elevator2 = new Elevator(2, 8);
+        service.registerElevator(elevator2);
     }
 	
 	@Test
@@ -35,17 +44,17 @@ class TestingUnit {
 		//simulo gli step
 		int maxSteps = 10;
 		int steps = 0;
-		while (elevator.hasStops() && steps < maxSteps) {
+		while (elevator1.hasStops() && steps < maxSteps) {
 			service.simulateStep();
 			steps++;
 		}
 
 		//testo il piano raggiunto
-		assertEquals(targetFloor, elevator.getCurrentFloor(),
+		assertEquals(targetFloor, elevator1.getCurrentFloor(),
 				"L'ascensore dovrebbe aver raggiunto il piano " + targetFloor);
 
 		//testo lo stato della porta
-		assertEquals(DoorState.OPEN, elevator.getDoorState(),
+		assertEquals(DoorState.OPEN, elevator1.getDoorState(),
 				"Le porte dovrebbero aprirsi una volta raggiunto il piano");
 	}
 
@@ -53,52 +62,64 @@ class TestingUnit {
 	void checkIfFloorExists() {
 		
 		//  piani validi
-		assertTrue(elevator.addStop(0), "Il piano 0 dovrebbe essere valido");
-		assertTrue(elevator.addStop(10), "Il piano 10 dovrebbe essere valido");
-		assertTrue(elevator.addStop(5), "Il piano 5 dovrebbe essere valido");
+		assertTrue(elevator1.addStop(0), "Il piano 0 dovrebbe essere valido");
+		assertTrue(elevator1.addStop(10), "Il piano 10 dovrebbe essere valido");
+		assertTrue(elevator1.addStop(5), "Il piano 5 dovrebbe essere valido");
 
 		// piani non esistenti
-		assertFalse(elevator.addStop(-1), "Un piano negativo non dovrebbe essere accettato");
-		assertFalse(elevator.addStop(11), "Un piano superiore a 10 non dovrebbe essere accettato");
+		assertFalse(elevator1.addStop(-1), "Un piano negativo non dovrebbe essere accettato");
+		assertFalse(elevator1.addStop(11), "Un piano superiore a 10 non dovrebbe essere accettato");
 	}
 	
 	@Test
 	void invalidFloorTest() {
 		
-	    boolean added = elevator.addStop(11);
-	    elevator.step();
+	    boolean added = elevator1.addStop(11);
+	    elevator1.step();
 
 	    //se il piano inserito non è valido addStop torna false
 	    assertFalse(added);
 	    
 	    //ascensore non si muove 
-	    assertEquals(0, elevator.getCurrentFloor());
-	    assertEquals(Direction.IDLE, elevator.getDirection());
+	    assertEquals(0, elevator1.getCurrentFloor());
+	    assertEquals(Direction.IDLE, elevator1.getDirection());
 	}
 	
 	@Test
 	void elevatorMovesUpTest() {
 		
-	    elevator.addStop(3);
-	    elevator.step();
+	    elevator1.addStop(3);
+	    elevator1.step();
 
 	    //faccio solo 1 step quindi ascensore si muove in alto di 1
-	    assertEquals(1, elevator.getCurrentFloor());
-	    assertEquals(Direction.UP, elevator.getDirection());
+	    assertEquals(1, elevator1.getCurrentFloor());
+	    assertEquals(Direction.UP, elevator1.getDirection());
 	}
 	
 	@Test
-	void CloseDoorsTest() {
+	void closeDoorsTest() {
 		
-	    elevator.addStop(1);
-	    elevator.step(); 
+	    elevator1.addStop(1);
+	    elevator1.step(); 
 	    
 	    //quando arriva OPEN
-	    assertEquals(DoorState.OPEN, elevator.getDoorState());
+	    assertEquals(DoorState.OPEN, elevator1.getDoorState());
 
-	    elevator.step(); 
+	    elevator1.step(); 
 	    
 	    //il metodo step cambiare DoorState a CLOSED
-	    assertEquals(DoorState.CLOSED, elevator.getDoorState());
+	    assertEquals(DoorState.CLOSED, elevator1.getDoorState());
 	}
+	
+	
+	@Test
+	void serviceElevatorTest() {
+
+	    service.requestFloor(7);
+
+	    //si muove solo l'ascensore più vicino
+	    assertFalse(elevator1.hasStops());
+	    assertTrue(elevator2.hasStops());
+	}
+	
 }

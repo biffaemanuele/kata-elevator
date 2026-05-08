@@ -4,7 +4,7 @@ import java.util.TreeSet;
 
 public class Elevator {
 	private final int id;
-	private int currentFloor = 0;
+	private int currentFloor;
 	private DoorState doorState = DoorState.CLOSED;
 	private Direction direction = Direction.IDLE;
 	private static final int MIN_FLOOR = 0;
@@ -12,8 +12,9 @@ public class Elevator {
 	//treeset per ordinare le fermate
 	private final TreeSet<Integer> stops = new TreeSet<>();
 
-	public Elevator(int id) {
+	public Elevator(int id, int currentFloor) {
 		this.id = id;
+		this.currentFloor = currentFloor;
 	}
 
 	public boolean addStop(int floor) {

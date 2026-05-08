@@ -16,7 +16,7 @@ class TestingUnit {
 
     @BeforeEach
     void setUp() {
-        // Creiamo un ascensore per ogni test
+
         elevator = new Elevator(1);
     }
 
@@ -26,7 +26,6 @@ class TestingUnit {
         try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
             executor.submit(elevator);
 
-            // Aggiungiamo la fermata
             elevator.addStop(2);
 
             await().atMost(3, TimeUnit.SECONDS)

@@ -13,8 +13,14 @@ public class Elevator implements Runnable {
 		this.id = id;
 	}
 
-	public void addStop(int floor) {
-		stops.add(floor);
+	public boolean addStop(int floor) {
+		if (floor >= 0 && floor <= 10) {
+			stops.add(floor);
+			return true;
+		} else {
+			System.err.println("[Elevator " + id + "] Floor : " + floor + " not avaiable, try again");
+			return false;
+		}
 	}
 
 	@Override
@@ -49,6 +55,7 @@ public class Elevator implements Runnable {
 		}
 	}
 
+	//monitoring
 	public int getId() {
 		return id;
 	}

@@ -7,6 +7,8 @@ public class Elevator {
 	private int currentFloor = 0;
 	private DoorState doorState = DoorState.CLOSED;
 	private Direction direction = Direction.IDLE;
+	private static final int MIN_FLOOR = 0;
+	private static final int MAX_FLOOR = 10;
 	//treeset per ordinare le fermate
 	private final TreeSet<Integer> stops = new TreeSet<>();
 
@@ -15,7 +17,7 @@ public class Elevator {
 	}
 
 	public boolean addStop(int floor) {
-		if (floor >= 0 && floor <= 10) {
+		if (floor >= MIN_FLOOR && floor <= MAX_FLOOR) {
 			stops.add(floor);
 			updateDirection();
 			return true;

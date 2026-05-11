@@ -1,5 +1,7 @@
 # 🛗 Java Elevator Kata
 
+Training project based on: http://kata-log.rocks/lift-kata
+
 A robust Java implementation of an elevator control system. This project simulates a fleet of elevators responding to floor requests by optimizing for the nearest available unit.
 
 ## 🚀 Features
@@ -16,7 +18,7 @@ A robust Java implementation of an elevator control system. This project simulat
 
 *   **Language**: Java 21
 *   **Build Tool**: Maven
-*   **Testing**: JUnit 5, AssertJ, Awaitility
+*   **Testing**: JUnit 5, AssertJ
 
 ---
 
@@ -31,6 +33,6 @@ The project is organized into clear, decoupled packages:
 ### 2. Service (`it.kataelevator.service`)
 *   **`ElevatorService`**: The controller/orchestrator. It manages the pool of elevators and implements the selection logic for incoming requests.
 
-### 3. Testing (`testing`)
+### 3. Testing
 *   **`ModelUnitTest`**: Validates core movement logic, door safety, and floor boundaries.
 *   **`ServiceUnitTest`**: Verifies the dispatcher's ability to pick the optimal elevator and reach the target.
